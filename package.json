@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon App.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/AbdulrahmanSaad/ChattingAppNodeJS/issues"
   },
-  "homepage": "https://github.com/AbdulrahmanSaad/ChattingAppNodeJS#readme"
+  "homepage": "https://github.com/AbdulrahmanSaad/ChattingAppNodeJS#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-graphql": "^0.11.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.5",
+    "nodemon": "^2.0.4"
+  }
 }
