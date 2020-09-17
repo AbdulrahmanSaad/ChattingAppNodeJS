@@ -1,18 +1,79 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const Message = require('../../Models/Message')
 const User = require('../../Models/User')
 
+const unauthenticatedCondition = (params) => {
+    if (!params) {
+    throw new Error("Unauthenticated")
+    }
+}
 module.exports = {
-    Query: {
+        messages: (args, req) => {
+
+            const {
+                isAuth
+            } = req
+            
+            unauthenticatedCondition(isAuth)
+
+            return Message.find().populate('sender')
+                .then(messages => {
+                    return messages.map(message => {
+                        return {
+                            ...message._doc,
+                        }
+                    })
+                })
+        },
         users: () => {
-            return User.find()
+
+            const {
+                isAuth
+            } = req
+            
+            unauthenticatedCondition(isAuth)
+
+            return User.find().populate('sentMessages')
                 .then(res => {
                     return res
                 }).catch(err => { console.log(err) })
         },
-    },
-    Mutation: {
-        createUser: (parent, args) => {
+        sendMessage: (args, req) => {
+
+            const {
+                isAuth
+            } = req
+            
+            unauthenticatedCondition(isAuth)
+            
+            const {
+                text
+            } = args.sendMessageInput
+            const message = new Message({
+                text,
+                sender: req.userId
+            })
+            let sentMessage
+            return message
+                .save()
+                .then((res) => {
+                    sentMessage = {
+                        ...res._doc,
+                    }
+                    res
+                    return User.findById(req.userId)
+                })
+                .then(user => {
+                    user.sentMessages.push(message)
+                    return user.save()
+                })
+                .catch(err => { console.log(err) })
+                .then(result => {
+                    return sentMessage
+                })
+        },
+        createUser: (args) => {
             const {
                 email,
                 password
@@ -32,7 +93,7 @@ module.exports = {
                 }
             })
         },
-        login: (parent, args) => {
+        login: (args) => {
             const {
                 email,
                 password
@@ -63,5 +124,4 @@ module.exports = {
                     }
                 })
         }
-    }
 }
