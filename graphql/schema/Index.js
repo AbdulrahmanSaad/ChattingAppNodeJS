@@ -1,8 +1,5 @@
-const {
-    buildSchema
-} = require('graphql')
 
-module.exports = buildSchema (`
+module.exports = `
         type Message {
             _id: ID!
             text: String!
@@ -27,7 +24,6 @@ module.exports = buildSchema (`
         
         input MessageInput {
             text: String!
-            sender: ID
         }
 
         input UserInput {
@@ -41,8 +37,13 @@ module.exports = buildSchema (`
             login(auth: UserInput): AuthData
         }
 
+        type RootSubscription {
+            message: Message
+        }
+
         schema {
             query: RootQuery
             mutation: RootMutation
+            subscription: RootSubscription
         }
-    `)
+    `

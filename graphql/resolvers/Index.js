@@ -4,16 +4,17 @@ const Message = require('../../Models/Message')
 const User = require('../../Models/User')
 
 const unauthenticatedCondition = (params) => {
-    if (!params) {
+    if (params === 'false') {
     throw new Error("Unauthenticated")
     }
 }
 module.exports = {
-        messages: (args, req) => {
 
+    RootQuery: {
+        messages: (_, args, context) => {
             const {
                 isAuth
-            } = req
+            } = context.request.isAuth
             
             unauthenticatedCondition(isAuth)
 
@@ -38,21 +39,22 @@ module.exports = {
                 .then(res => {
                     return res
                 }).catch(err => { console.log(err) })
-        },
-        sendMessage: (args, req) => {
-
+        }},
+        RootMutation : {
+        sendMessage (_, args, context) {
             const {
                 isAuth
-            } = req
+            } = context.request.isAuth
             
             unauthenticatedCondition(isAuth)
             
             const {
-                text
+                text,
+                sender
             } = args.sendMessageInput
             const message = new Message({
                 text,
-                sender: req.userId
+                sender: context.request.userId
             })
             let sentMessage
             return message
@@ -62,7 +64,7 @@ module.exports = {
                         ...res._doc,
                     }
                     res
-                    return User.findById(req.userId)
+                    return User.findById(context.request.userId)
                 })
                 .then(user => {
                     user.sentMessages.push(message)
@@ -70,10 +72,16 @@ module.exports = {
                 })
                 .catch(err => { console.log(err) })
                 .then(result => {
+                    const {
+                        pubsub
+                    } = context
+                    pubsub.publish('message',{
+                        message : {...args.sendMessageInput}
+                    });
                     return sentMessage
                 })
         },
-        createUser: (args) => {
+        createUser: (_, args) => {
             const {
                 email,
                 password
@@ -93,7 +101,7 @@ module.exports = {
                 }
             })
         },
-        login: (args) => {
+        login: (_, args, context) => {
             const {
                 email,
                 password
@@ -123,5 +131,15 @@ module.exports = {
                             }).catch(err => console.log(err))
                     }
                 })
-        }
+        }},
+        
+        RootSubscription: {
+        message: {
+            subscribe(_, args, context){
+                const {
+                    pubsub
+                } = context
+                return pubsub.asyncIterator("message")
+            }
+        }}
 }

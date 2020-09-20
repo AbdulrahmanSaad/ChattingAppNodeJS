@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
-const { GraphQLServer } = require('graphql-yoga');
-const { graphqlHTTP } = require('express-graphql')
+const { 
+  GraphQLServer,
+  PubSub 
+} = require('graphql-yoga');
 
 const isAuth = require('./middleware/IsAuth')
 const graphqlSchema = require('./graphql/schema/Index')
@@ -8,16 +10,13 @@ const graphQlResolvers = require('./graphql/resolvers/Index')
 
 const DB_URL = "mongodb://localhost:27017/Chatting"
 
+const pubsub = new PubSub()
 const server = new GraphQLServer({
-  schema: graphqlSchema,
+  typeDefs: graphqlSchema,
   resolvers: graphQlResolvers,
+  context: req => ({...req, pubsub})
 })
 server.express.use(isAuth)
-server.express.use(graphqlHTTP({
-  schema: graphqlSchema,
-  rootValue: graphQlResolvers,
-  graphiql: true
-}))
 const options = {
   port: 3000
 };
