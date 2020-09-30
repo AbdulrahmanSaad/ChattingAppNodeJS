@@ -48,8 +48,7 @@ module.exports = {
             unauthenticatedCondition(isAuth)
 
             const {
-                text,
-                sender
+                text
             } = args.sendMessageInput
             const message = new Message({
                 text,
@@ -75,7 +74,7 @@ module.exports = {
                         pubsub
                     } = context
                     pubsub.publish('message',{
-                        message : {...args.sendMessageInput}
+                        message : sentMessage
                     });
                     return sentMessage
                 })
