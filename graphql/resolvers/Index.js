@@ -4,8 +4,8 @@ const Message = require('../../Models/Message')
 const User = require('../../Models/User')
 
 const unauthenticatedCondition = (params) => {
-    if (params === 'false') {
-    throw new Error("Unauthenticated")
+    if (params == false) {
+        throw new Error("Unauthenticated")
     }
 }
 module.exports = {
@@ -14,8 +14,7 @@ module.exports = {
         messages: (_, args, context) => {
             const {
                 isAuth
-            } = context.request.isAuth
-            
+            } = context.request
             unauthenticatedCondition(isAuth)
 
             return Message.find().populate('sender')
@@ -32,22 +31,22 @@ module.exports = {
             const {
                 isAuth
             } = req
-            
+
             unauthenticatedCondition(isAuth)
 
             return User.find().populate('sentMessages')
                 .then(res => {
                     return res
                 }).catch(err => { console.log(err) })
-        }},
-        RootMutation : {
+    }},
+    RootMutation : {
         sendMessage (_, args, context) {
             const {
                 isAuth
             } = context.request.isAuth
-            
+
             unauthenticatedCondition(isAuth)
-            
+
             const {
                 text,
                 sender
@@ -132,8 +131,8 @@ module.exports = {
                     }
                 })
         }},
-        
-        RootSubscription: {
+
+    RootSubscription: {
         message: {
             subscribe(_, args, context){
                 const {
