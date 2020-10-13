@@ -4,7 +4,7 @@ const Message = require('../../Models/Message')
 const User = require('../../Models/User')
 
 const unauthenticatedCondition = (params) => {
-    if (params == false) {
+    if (!params) {
         throw new Error("Unauthenticated")
     }
 }
@@ -43,7 +43,7 @@ module.exports = {
         sendMessage (_, args, context) {
             const {
                 isAuth
-            } = context.request.isAuth
+            } = context.request
 
             unauthenticatedCondition(isAuth)
 
@@ -58,10 +58,7 @@ module.exports = {
             return message
                 .save()
                 .then((res) => {
-                    sentMessage = {
-                        ...res._doc,
-                    }
-                    res
+                    sentMessage = res
                     return User.findById(context.request.userId)
                 })
                 .then(user => {
