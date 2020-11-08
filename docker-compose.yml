@@ -2,8 +2,8 @@ version: "3.8"
 services:
   web:
     build: .
-    image: nodejs
     container_name: nodejscontainer
+    image: abdusaad/chattingapp_nodejs
     ports:
       - "3000:3000"
     links: 
