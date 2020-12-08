@@ -6,16 +6,20 @@ services:
     image: abdusaad/chattingapp_nodejs
     ports:
       - "3000:3000"
-    links: 
-      - mongo
-    # volumes:
-    #   - mongodb:/data/db
-    #   - mongodb_config:/data/configdb
 
-  mongo:
+  mongodb:
     image: mongo
-    container_name: mongocontainer
+    ports:
+    - 27017:27017
+    environment:
+    - MONGO_INITDB_ROOT_USERNAME=admin
+    - MONGO_INITDB_ROOT_PASSWORD=password
 
-# volumes: 
-#   mongodb:
-#   mongodb_config:
+  mongo-express:
+    image: mongo-express
+    ports:
+    - 8081:8081
+    environment:
+    - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+    - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+    - ME_CONFIG_MONGODB_SERVER=mongodb
