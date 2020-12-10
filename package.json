@@ -2,7 +2,7 @@
   "name": "chattingappnodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "App.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon App.js"
@@ -18,10 +18,16 @@
   },
   "homepage": "https://github.com/AbdulrahmanSaad/ChattingAppNodeJS#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "express-graphql": "^0.11.0",
+    "apollo-server-core": "^2.19.0",
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "graphql-yoga": "^1.18.3",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.5",
-    "nodemon": "^2.0.4"
+    "mongoose": "^5.4.10"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
   }
 }
