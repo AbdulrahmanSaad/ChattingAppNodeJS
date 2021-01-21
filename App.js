@@ -8,7 +8,7 @@ const isAuth = require('./middleware/IsAuth')
 const graphqlSchema = require('./graphql/schema/Index')
 const graphQlResolvers = require('./graphql/resolvers/Index')
 
-const DB_URL = "mongodb://admin:password@mongodb:27017"
+const DB_URL = "mongodb://localhost:27017"
 
 const pubsub = new PubSub()
 const server = new GraphQLServer({
