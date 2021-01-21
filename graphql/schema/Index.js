@@ -6,9 +6,10 @@ module.exports = `
         }
 
         type User {
+            error: String
             _id: ID!
             email: String!
-            password: String
+            password: String!
             sentMessages: [Message!]
         }
 

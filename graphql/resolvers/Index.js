@@ -38,9 +38,10 @@ module.exports = {
                 .then(res => {
                     return res
                 }).catch(err => { console.log(err) })
-    }},
-    RootMutation : {
-        sendMessage (_, args, context) {
+        }
+    },
+    RootMutation: {
+        sendMessage(_, args, context) {
             const {
                 isAuth
             } = context.request
@@ -70,8 +71,8 @@ module.exports = {
                     const {
                         pubsub
                     } = context
-                    pubsub.publish('message',{
-                        message : sentMessage
+                    pubsub.publish('message', {
+                        message: sentMessage
                     });
                     return sentMessage
                 })
@@ -82,18 +83,45 @@ module.exports = {
                 password
             } = args.createUserInput
 
-            return User.findOne({ email }).then(user => {
-                if (user) {
-                    throw new Error("Email already in use")
-                } else {
-                    return bcrypt.hash(password, 12).then((result) => {
-                        const user = new User({
-                            email,
-                            password: result
-                        })
-                        return user.save().then(res => { return res }).catch(err => { console.log(err) })
-                    })
+            let errMsg = {
+                error: "",
+                _id: ""
+            }
+
+            const trimmedEmail = email.trim();
+
+            if (!trimmedEmail || trimmedEmail && !/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(trimmedEmail)) {
+                errMsg = {
+                    error: "Invalid email form",
+                    _id: "Not found"
                 }
+                return errMsg
+            }
+
+            return User.findOne({ email: trimmedEmail }).then(user => {
+                if (user) {
+                    // throw new Error().then(res => {return res})
+                    errMsg = {
+                        error: "Email already in use",
+                        _id: "Not displayed"
+                    }
+                    return errMsg
+                }
+                if(!password){
+                    errMsg = {
+                        error: "Password is required",
+                        _id: "Not displayed"
+                    }
+                    return errMsg
+                }
+                return bcrypt.hash(password, 12).then((result) => {
+                    const user = new User({
+                        email: trimmedEmail,
+                        password: result
+                    })
+                    return user.save().then(res => { return res }).catch(err => { console.log(err) })
+                })
+
             })
         },
         login: (_, args, context) => {
@@ -126,15 +154,17 @@ module.exports = {
                             }).catch(err => console.log(err))
                     }
                 })
-        }},
+        }
+    },
 
     RootSubscription: {
         message: {
-            subscribe(_, args, context){
+            subscribe(_, args, context) {
                 const {
                     pubsub
                 } = context
                 return pubsub.asyncIterator("message")
             }
-        }}
+        }
+    }
 }
