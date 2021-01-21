@@ -14,6 +14,7 @@ module.exports = `
         }
 
         type AuthData {
+            error: String
             _id: ID!
             token: String!
         }

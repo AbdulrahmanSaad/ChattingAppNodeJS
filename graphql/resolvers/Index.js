@@ -8,6 +8,9 @@ const unauthenticatedCondition = (params) => {
         throw new Error("Unauthenticated")
     }
 }
+
+let trimmedEmail
+
 module.exports = {
 
     RootQuery: {
@@ -88,7 +91,7 @@ module.exports = {
                 _id: ""
             }
 
-            const trimmedEmail = email.trim();
+            trimmedEmail = email.trim();
 
             if (!trimmedEmail || trimmedEmail && !/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(trimmedEmail)) {
                 errMsg = {
@@ -130,7 +133,27 @@ module.exports = {
                 password
             } = args.auth
 
-            return User.findOne({ email })
+            trimmedEmail = email.trim()
+
+            if (!trimmedEmail || trimmedEmail && !/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(trimmedEmail)) {
+                errMsg = {
+                    error: "Invalid email form",
+                    _id: "Not Found",
+                    token: "Not found"
+                }
+                return errMsg
+            }
+
+            if(!password){
+                errMsg = {
+                    error: "Password is required",
+                    _id: "Not displayed",
+                    token: "Not found"
+                }
+                return errMsg
+            }
+
+            return User.findOne({ email: trimmedEmail })
                 .then((user) => {
                     if (user) {
                         return bcrypt.compare(password, user.password)
@@ -140,7 +163,7 @@ module.exports = {
                                 }
                                 else {
                                     let token = jwt.sign({
-                                        email,
+                                        email: trimmedEmail,
                                         userId: user._id
                                     }, "This is the JWT Secret")
                                     const authData = {
