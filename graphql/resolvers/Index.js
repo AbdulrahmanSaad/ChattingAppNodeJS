@@ -110,7 +110,7 @@ module.exports = {
                     }
                     return errMsg
                 }
-                if(!password){
+                if (!password) {
                     errMsg = {
                         error: "Password is required",
                         _id: "Not displayed"
@@ -144,7 +144,7 @@ module.exports = {
                 return errMsg
             }
 
-            if(!password){
+            if (!password) {
                 errMsg = {
                     error: "Password is required",
                     _id: "Not displayed",
@@ -175,6 +175,14 @@ module.exports = {
                             }).then(res => {
                                 return res
                             }).catch(err => console.log(err))
+                    }
+                    else {
+                        errMsg = {
+                            error: "email not found",
+                            _id: "Not Found",
+                            token: "Not found"
+                        }
+                        return errMsg
                     }
                 })
         }
